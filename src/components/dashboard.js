@@ -8,8 +8,12 @@ const validationSchema = Yup.object().shape({
   phoneNumber: Yup.string().required('Phone Number is required'),
   password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
   location: Yup.string().required('Location is required'),
-  industry: Yup.string().required('Industry is required'),
   userType: Yup.string().required('User Type is required'),
+  role: Yup.string().required('Role is required'),
+  clientId: Yup.string().required('Client ID is required'),
+  isFirstTimeLogin: Yup.boolean().required('First Time Login is required'),
+  emergencyContactName: Yup.string().required('Emergency Contact Name is required'),
+  emergencyContactNumber: Yup.string().required('Emergency Contact Number is required'),
 });
 
 function Dashboard() {
@@ -23,8 +27,12 @@ function Dashboard() {
           phoneNumber: '',
           password: '',
           location: '',
-          industry: '',
-          userType: ''
+          userType: '',
+          role: '',
+          clientId: '',
+          isFirstTimeLogin: true,
+          emergencyContactName: '',
+          emergencyContactNumber: ''
         }}
         validationSchema={validationSchema}
         onSubmit={(values, { setSubmitting }) => {
@@ -62,17 +70,33 @@ function Dashboard() {
               <ErrorMessage name="location" component="div" className="text-danger" />
             </div>
             <div className="mb-3">
-              <label htmlFor="industry" className="form-label">Industry</label>
-              <Field type="text" className="form-control" id="industry" name="industry" />
-              <ErrorMessage name="industry" component="div" className="text-danger" />
-            </div>
-            <div className="mb-3">
               <label htmlFor="userType" className="form-label">User Type</label>
               <Field as="select" className="form-control" id="userType" name="userType">
-                <option value="Manager">Manager</option>
+                <option value="Manager">Admin</option>
                 <option value="Employee">Employee</option>
               </Field>
               <ErrorMessage name="userType" component="div" className="text-danger" />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="role" className="form-label">Role</label>
+              <Field type="text" className="form-control" id="role" name="role" />
+              <ErrorMessage name="role" component="div" className="text-danger" />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="clientId" className="form-label">Client ID</label>
+              <Field type="text" className="form-control" id="clientId" name="clientId" />
+              <ErrorMessage name="clientId" component="div" className="text-danger" />
+            </div>
+        
+            <div className="mb-3">
+              <label htmlFor="emergencyContactName" className="form-label">Emergency Contact Name</label>
+              <Field type="text" className="form-control" id="emergencyContactName" name="emergencyContactName" />
+              <ErrorMessage name="emergencyContactName" component="div" className="text-danger" />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="emergencyContactNumber" className="form-label">Emergency Contact Number</label>
+              <Field type="text" className="form-control" id="emergencyContactNumber" name="emergencyContactNumber" />
+              <ErrorMessage name="emergencyContactNumber" component="div" className="text-danger" />
             </div>
             <button type="submit" className="btn btn-primary" disabled={isSubmitting}>Update</button>
           </Form>

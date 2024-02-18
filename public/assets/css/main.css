@@ -104,6 +104,12 @@ section {
   margin-bottom: 0;
   color: #6f6f6f;
 }
+header{
+  margin-bottom: 25px;
+}
+footer{
+  margin-top: 25px;
+}
 
 /*--------------------------------------------------------------
 # Breadcrumbs

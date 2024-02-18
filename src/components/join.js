@@ -8,6 +8,9 @@ const SignUp = () => {
     username: Yup.string().required('Username is required'),
     password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
     role: Yup.string().required('Role is required'),
+    firstName: Yup.string().required('First Name is required'),
+    lastName: Yup.string().required('Last Name is required'),
+    gender: Yup.string().required('Gender is required'),
   });
 
   const handleSubmit = (values, { setSubmitting }) => {
@@ -26,7 +29,10 @@ const SignUp = () => {
               email: '',
               username: '',
               password: '',
-              role: 'employee'
+              role: 'employee',
+              firstName: '',
+              lastName: '',
+              gender: ''
             }}
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
@@ -34,6 +40,16 @@ const SignUp = () => {
             {({ isSubmitting }) => (
               <Form id="signupForm" className="p-3 bg-white shadow rounded needs-validation" noValidate>
                 <h2 className="text-center mb-4">Sign Up</h2>
+                <div className="mb-3">
+                  <label htmlFor="firstName" className="form-label">First Name:</label>
+                  <Field type="text" className="form-control" id="firstName" name="firstName" required />
+                  <ErrorMessage name="firstName" component="div" className="invalid-feedback" />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="lastName" className="form-label">Last Name:</label>
+                  <Field type="text" className="form-control" id="lastName" name="lastName" required />
+                  <ErrorMessage name="lastName" component="div" className="invalid-feedback" />
+                </div>
                 <div className="mb-3">
                   <label htmlFor="email" className="form-label">Email:</label>
                   <Field type="email" className="form-control" id="email" name="email" required />
@@ -56,6 +72,16 @@ const SignUp = () => {
                   <label htmlFor="password" className="form-label">Password:</label>
                   <Field type="password" className="form-control" id="password" name="password" required />
                   <ErrorMessage name="password" component="div" className="invalid-feedback" />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="gender" className="form-label">Gender:</label>
+                  <Field as="select" className="form-select" id="gender" name="gender" required>
+                    <option value="">Select</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </Field>
+                  <ErrorMessage name="gender" component="div" className="invalid-feedback" />
                 </div>
                 <button type="submit" className="btn btn-success" disabled={isSubmitting}>Sign Up</button>
               </Form>
