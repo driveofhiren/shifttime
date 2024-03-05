@@ -377,7 +377,7 @@ const home = () => {
 									</div>
 									<h4>
 										<sup>$</sup>59
-										<span> / month / location</span>
+										<span> / mont</span>
 									</h4>
 									<ul>
 										<li>
@@ -400,7 +400,7 @@ const home = () => {
 											<i className="bi bi-check" /> Shift
 											swapping
 										</li>
-										{/* Add more Gold Plan features here */}
+									
 									</ul>
 									<div className="text-center">
 										<button
@@ -423,7 +423,7 @@ const home = () => {
 										<i className="bi bi-credit-card" />
 									</div>
 									<h4>
-										<sup>$</sup>79
+										<sup>$</sup>49
 										<span> / month</span>
 									</h4>
 									<ul>
@@ -474,7 +474,7 @@ const home = () => {
 										<i className="bi bi-credit-card" />
 									</div>
 									<h4>
-										<sup>$</sup>99
+										<sup>$</sup>79
 										<span> / month</span>
 									</h4>
 									<ul>
