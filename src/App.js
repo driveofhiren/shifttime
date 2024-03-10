@@ -8,7 +8,7 @@ import Clientmanagement from './components/clientmanagement'
 import Employeemanagement from './components/employeemanagement'
 function App() {
 	return (
-		<Router>
+	
 			<Routes>
 				<Route path="/" element={<Layout child={<Home />} />} />
 				<Route path="/login" element={<Layout child={<Login />} />} />
@@ -26,7 +26,7 @@ function App() {
 					element={<Layout child={<Employeemanagement />} />}
 				/>
 			</Routes>
-		</Router>
+		
 	)
 }
 
