@@ -12,6 +12,7 @@ const Login = ({ history }) => {
     password: Yup.string().required('Password is required'),
   });
 
+
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
       const response = await axios.post('/login', values);
@@ -19,13 +20,15 @@ const Login = ({ history }) => {
       setLoggedInUser(user);
       localStorage.setItem('loggedInUser', JSON.stringify(user));
       
+      // Redirect to home page
+      window.location.href = '/'; // Change the URL to the desired home page URL
     } catch (error) {
       setLoginError('Invalid email or password');
     }
+  
     setSubmitting(false);
     resetForm();
   };
-
   return (
     <div className="container">
       {loggedInUser && (

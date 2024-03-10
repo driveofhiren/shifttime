@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { BsPerson } from 'react-icons/bs'; // Assuming you've installed react-icons package
 
 function Header() {
     // Retrieve loggedIn and role data from localStorage
@@ -12,7 +13,11 @@ function Header() {
     const handleLogout = () => {
         // Clear loggedIn and role data from localStorage upon logout
         localStorage.removeItem('loggedInUser');
+        
+        // Redirect to login page
+        window.location.href = '/login'; // Change the URL to the login page URL
     };
+    
 
     return (
         <div>
@@ -58,36 +63,65 @@ function Header() {
                                     </li>
                                 </>
                             )}
-                            {isLoggedIn && (
-                                <>
-                                    {userRole === 'SuperAdmin' && (
-                                        <>
-                                            <li>
-                                                <Link to="/clientmanagement">Client Management</Link>
-                                            </li>
-                                            <li>
-                                                <Link to="/dashboard">Dashboard</Link>
-                                            </li>
-                                        </>
-                                    )}
-                                    {userRole === 'employee' && (
-                                        <li>
-                                            <Link to="/dashboard">Dashboard</Link>
-                                        </li>
-                                    )}
-                                    {userRole === 'Manager' && (
-                                        <li>
-                                            <Link to="/employeemanagement">Employee management</Link>
-                                        </li>
-                                    )}
-                                    <li>
-                                        <Link onClick={handleLogout}>Logout</Link>
-                                    </li>
-                                </>
-                            )}
+                          
+{isLoggedIn && (
+    <>
+        {userRole === 'SuperAdmin' && (
+            <>
+                <li>
+                     <Link to="/clientmanagement">Client Management</Link>
+                </li>
+                <li>
+                  <Link to="/dashboard">Dashboard</Link>
+                </li>
+            </>
+        )}
+        {userRole === 'employee' && (
+            <li>
+                 <Link to="/dashboard">Dashboard</Link>
+            </li>
+        )}
+        {userRole === 'Manager' && (
+            <li>
+                <Link to="/employeemanagement">Employee Management</Link>
+            </li>
+        )}
+        <li>
+            <Link onClick={handleLogout}>Logout</Link>
+        </li>
+    </>
+)}
                             <li>
                                 <a href="blog.html">Contact</a>
                             </li>
+                            {isLoggedIn && (
+    <>
+        {userRole === 'SuperAdmin' && (
+            <>
+                <li>
+                    <BsPerson/> <Link to="/">SuperAdmin</Link>
+                </li>
+               
+            </>
+        )}
+        {userRole === 'employee' && (
+            <li>
+                 <BsPerson/> <Link to="/">employee</Link>
+            </li>
+        )}
+        {userRole === 'Manager' && (
+            <li>
+              <BsPerson/>   <Link to="/">Manager</Link>
+            </li>
+        )}
+        {userRole === 'ADMIN' && (
+            <li>
+              <BsPerson/>   <Link to="/">ADMIN</Link>
+            </li>
+        )}
+        
+    </>
+)}
                         </ul>
                     </nav>
                     {/* .navbar */}
