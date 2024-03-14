@@ -21,6 +21,7 @@ const userSchema = new mongoose.Schema({
   firstName: String,
   lastName: String,
   gender: String,
+  plan: String 
 });
 
 // Create a model based on the schema
@@ -33,7 +34,7 @@ app.use(bodyParser.json());
 // Sign-up route
 app.post('/signup', async (req, res) => {
   try {
-    const { email, username, password, role, firstName, lastName, gender } = req.body;
+    const { email, username, password, role, firstName, lastName, gender} = req.body;
     
     // Check if user with the same email or username already exists
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
@@ -41,7 +42,7 @@ app.post('/signup', async (req, res) => {
       return res.status(400).json({ error: 'User with the same email or username already exists' });
     }
     
-    const newUser = new User({ email, username, password, role, firstName, lastName, gender });
+    const newUser = new User({ email, username, password, role, firstName, lastName, gender,  plan: ''});
     await newUser.save();
     res.status(201).json({ message: 'User created successfully' });
   } catch (error) {
@@ -60,6 +61,31 @@ app.get('/users', async (req, res) => {
       res.status(500).json({ error: 'Server error' });
     }
   });
+
+  // Subscription route
+  app.post('/subscribe', async (req, res) => {
+    try {
+      console.log("Received subscription request:", req.body); 
+      const { plan, email } = req.body;      
+      // Find user by email
+      const user = await User.findOne({ email });
+  
+      // Check if user exists
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+  
+      // Update the user's plan
+      user.plan = plan;
+      await user.save();
+  
+      res.status(200).json({ message: 'Subscription successful', user });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Server error' });
+    }
+  });
+
 
 // Login route
 app.post('/login', async (req, res) => {

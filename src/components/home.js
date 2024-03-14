@@ -1,21 +1,21 @@
 import React from 'react'
+import axios from 'axios';
 
 const home = () => {
-	const handleSubscription = (plan) => {
-		// Logic to handle subscription, e.g., API call,
-
-		const userModel = {
-			email: '',
-			username: '',
-			password: '',
-			role: 'employee',
-			firstName: '',
-			lastName: '',
-			gender: '',
-			plan: '',
+	const handleSubscription = async (plan) => {
+		try {
+			const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+			const email = loggedInUser ? loggedInUser.email : '';
+	  
+		  const response = await axios.post('/subscribe', { plan, email });
+		  console.log('Subscription successful:', response.data);
+		  
+		  // You may perform additional actions after successful subscription
+		} catch (error) {
+		  console.error('Subscription failed:', error);
+		  // Handle subscription failure
 		}
-		console.log('User Model:', userModel)
-	}
+	  };
 	return (
 		<>
 			<section id="hero" className="hero">
@@ -403,14 +403,9 @@ const home = () => {
 									
 									</ul>
 									<div className="text-center">
-										<button
-											onClick={() =>
-												handleSubscription('Gold')
-											}
-											className="buy-btn"
-										>
-											Subscribe
-										</button>
+									<button onClick={() => handleSubscription('Gold')} className="buy-btn">
+        Subscribe to Gold Plan
+      </button>
 									</div>
 								</div>
 							</div>
@@ -454,14 +449,9 @@ const home = () => {
 										</li>
 									</ul>
 									<div className="text-center">
-										<button
-											onClick={() =>
-												handleSubscription('Silver')
-											}
-											className="buy-btn"
-										>
-											Subscribe
-										</button>
+									<button onClick={() => handleSubscription('Silver')} className="buy-btn">
+        Subscribe to Silver Plan
+      </button>
 									</div>
 								</div>
 							</div>
@@ -510,14 +500,9 @@ const home = () => {
 										</li>
 									</ul>
 									<div className="text-center">
-										<button
-											onClick={() =>
-												handleSubscription('Platinum')
-											}
-											className="buy-btn"
-										>
-											Subscribe
-										</button>
+									<button onClick={() => handleSubscription('Platinum')} className="buy-btn">
+        Subscribe to Platinum Plan
+      </button>
 									</div>
 								</div>
 							</div>

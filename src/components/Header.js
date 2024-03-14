@@ -1,13 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { BsPerson } from 'react-icons/bs'; // Assuming you've installed react-icons package
+import { BsStarFill } from 'react-icons/bs'; 
+import { BsStarHalf  } from 'react-icons/bs'; 
+import { BsStar } from 'react-icons/bs'; 
+
 
 function Header() {
     // Retrieve loggedIn and role data from localStorage
-	let userRole="";
+	let userRole,userPlan="";
     const isLoggedIn = JSON.parse(localStorage.getItem('loggedInUser'));
     if (isLoggedIn) {
 		userRole = isLoggedIn.role;
+        userPlan = isLoggedIn.plan;
 	}
 
     const handleLogout = () => {
@@ -43,87 +48,102 @@ function Header() {
                         <img src="assets/img/logo.png" alt="" />
                     </a>
                     <nav id="navbar" className="navbar">
-                        <ul>
-                            <li>
-                                <a href="/">Home</a>
-                            </li>
-                            <li>
-                                <a href="#about">About</a>
-                            </li>
-                            <li>
-                                <a href="#team">Team</a>
-                            </li>
-                            {!isLoggedIn && (
-                                <>
-                                    <li>
-                                        <Link to="/login">Login</Link>
-                                    </li>
-                                    <li>
-                                        <Link to="/signup">Join</Link>
-                                    </li>
-                                </>
-                            )}
-                          
-{isLoggedIn && (
-    <>
-        {userRole === 'SuperAdmin' && (
+    <ul>
+        <li>
+            <a href="/">Home</a>
+        </li>
+        <li>
+            <a href="#about">About</a>
+        </li>
+        <li>
+            <a href="#team">Team</a>
+        </li>
+        {!isLoggedIn && (
             <>
                 <li>
-                     <Link to="/clientmanagement">Client Management</Link>
+                    <Link to="/login">Login</Link>
                 </li>
                 <li>
-                  <Link to="/dashboard">Dashboard</Link>
+                    <Link to="/signup">Join</Link>
                 </li>
             </>
         )}
-        {userRole === 'employee' && (
-            <li>
-                 <Link to="/dashboard">Dashboard</Link>
-            </li>
-        )}
-        {userRole === 'Manager' && (
-            <li>
-                <Link to="/employeemanagement">Employee Management</Link>
-            </li>
+        {isLoggedIn && (
+            <>
+                {userRole === 'SuperAdmin' && (
+                    <>
+                        <li>
+                            <Link to="/clientmanagement">Client Management</Link>
+                        </li>
+                        <li>
+                            <Link to="/dashboard">Dashboard</Link>
+                        </li>
+                    </>
+                )}
+                {userRole === 'employee' && (
+                    <li>
+                        <Link to="/dashboard">Dashboard</Link>
+                    </li>
+                )}
+                {userRole === 'Manager' && (
+                    <li>
+                        <Link to="/employeemanagement">Employee Management</Link>
+                    </li>
+                )}
+                <li>
+                    <Link onClick={handleLogout}>Logout</Link>
+                </li>
+            </>
         )}
         <li>
-            <Link onClick={handleLogout}>Logout</Link>
+            <a href="blog.html">Contact</a>
         </li>
-    </>
-)}
-                            <li>
-                                <a href="blog.html">Contact</a>
-                            </li>
-                            {isLoggedIn && (
-    <>
-        {userRole === 'SuperAdmin' && (
+        {isLoggedIn && (
             <>
-                <li>
-                    <BsPerson/> <Link to="/">SuperAdmin</Link>
-                </li>
-               
+                {userRole === 'SuperAdmin' && (
+                    <li>
+                        <BsPerson/> <Link to="/">SuperAdmin</Link>
+                    </li>
+                )}
+                {userRole === 'employee' && (
+                    <li>
+                        <BsPerson/> <Link to="/">employee</Link>
+                    </li>
+                )}
+                {userRole === 'Manager' && (
+                    <li>
+                        <BsPerson/> <Link to="/">Manager</Link>
+                    </li>
+                )}
+                {userRole === 'ADMIN' && (
+                    <li>
+                        <BsPerson/> <Link to="/">ADMIN</Link>
+                    </li>
+                )}
             </>
         )}
-        {userRole === 'employee' && (
-            <li>
-                 <BsPerson/> <Link to="/">employee</Link>
-            </li>
+        {isLoggedIn && userRole === 'ADMIN' && isLoggedIn.plan && (
+            <>
+                {isLoggedIn.plan === "Gold" && (
+                    <li>
+                        <BsStarFill  className="text-warning" />
+                    </li>
+                )}
+                {isLoggedIn.plan === "Silver" && (
+                    <li>
+                        <BsStarHalf className="text-primary" />
+                    </li>
+                )}
+                {isLoggedIn.plan === "Platinum" && (
+                    <li>
+                        <BsStar className="text-success" />
+                    </li>
+                )}
+            </>
         )}
-        {userRole === 'Manager' && (
-            <li>
-              <BsPerson/>   <Link to="/">Manager</Link>
-            </li>
-        )}
-        {userRole === 'ADMIN' && (
-            <li>
-              <BsPerson/>   <Link to="/">ADMIN</Link>
-            </li>
-        )}
-        
-    </>
-)}
-                        </ul>
-                    </nav>
+    </ul>
+</nav>
+
                     {/* .navbar */}
                     <i className="mobile-nav-toggle mobile-nav-show bi bi-list" />
                     <i className="mobile-nav-toggle mobile-nav-hide d-none bi bi-x" />
