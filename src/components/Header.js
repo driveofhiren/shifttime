@@ -126,17 +126,17 @@ function Header() {
             <>
                 {isLoggedIn.plan === "Gold" && (
                     <li>
-                        <BsStarFill  className="text-warning" />
+                        <BsStarFill  className="black" />
                     </li>
                 )}
                 {isLoggedIn.plan === "Silver" && (
                     <li>
-                        <BsStarHalf className="text-primary" />
+                        <BsStarHalf className="black" />
                     </li>
                 )}
                 {isLoggedIn.plan === "Platinum" && (
                     <li>
-                        <BsStar className="text-success" />
+                        <BsStar className="black" />
                     </li>
                 )}
             </>

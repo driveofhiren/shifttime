@@ -39,7 +39,7 @@ const SignUp = () => {
       const { email, username, password, role, firstName, lastName, gender } = values;
   
       await axios.post('/signup', { email, username, password, role, firstName, lastName, gender });
-      alert('User created successfully');
+      window.location.href = '/login';
     } catch (error) {
       alert('Error creating user');
     } finally {
