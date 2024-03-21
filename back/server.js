@@ -51,6 +51,29 @@ app.post('/signup', async (req, res) => {
   }
 });
 
+// Delete user route
+// Update user route
+app.delete('/users/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Delete the user by id
+    const result = await User.deleteOne({ _id: id });
+
+    // Check if the user was deleted successfully
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.status(200).json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
+
 // Fetch users route
 app.get('/users', async (req, res) => {
     try {
@@ -61,6 +84,38 @@ app.get('/users', async (req, res) => {
       res.status(500).json({ error: 'Server error' });
     }
   });
+
+  // Update user route
+app.put('/users/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log(req.params);
+    const { firstName, lastName, email, gender } = req.body;
+
+    // Find the user by id
+    const user = await User.findById(id);
+
+    // Check if the user exists
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Update user details
+    user.firstName = firstName;
+    user.lastName = lastName;
+    user.email = email;
+    user.gender = gender;
+
+    // Save the updated user
+    await user.save();
+
+    res.status(200).json({ message: 'User details updated successfully', user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 
   // Subscription route
   app.post('/subscribe', async (req, res) => {

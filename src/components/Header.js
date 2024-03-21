@@ -75,9 +75,7 @@ function Header() {
                         <li>
                             <Link to="/clientmanagement">Client Management</Link>
                         </li>
-                        <li>
-                            <Link to="/dashboard">Dashboard</Link>
-                        </li>
+                       
                     </>
                 )}
                 {userRole === 'employee' && (
