@@ -1,18 +1,57 @@
 import React, { useState, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import axios from 'axios';
+import { Calendar, momentLocalizer } from 'react-big-calendar';
+import moment from 'moment';
+
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+
+const localizer = momentLocalizer(moment);
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required('Name is required'),
+  firstName: Yup.string().required('First Name is required'),
+  lastName: Yup.string().required('Last Name is required'),
   email: Yup.string().email('Invalid email').required('Email is required'),
   role: Yup.string().required('Role is required'),
   phoneNumber: Yup.string().required('Phone Number is required'),
+  availability: Yup.array().of(
+    Yup.object().shape({
+      day_of_week: Yup.string().required('Day of week is required'),
+      start_time: Yup.string().required('Start time is required'),
+      end_time: Yup.string().required('End time is required'),
+      availability_type: Yup.string().required('Availability type is required'),
+      _id: Yup.string().required('_id is required'),
+    })
+  ).required('Availability is required'),
 });
+
+const colorMap = {}; // Maintain a mapping between notes and colors
+
+const generateColor = (notes, alpha = 0.8) => {
+  const colorKey = notes + alpha; // Combine notes and alpha to create a unique key
+  if (!colorMap[colorKey]) {
+    // If color for the note is not already set, generate a random color
+    const color = '#' + Math.floor(Math.random() * 16777215).toString(16); // Random hex color
+    // Apply alpha transparency
+    const rgbaColor = hexToRGBA(color, alpha);
+    colorMap[colorKey] = rgbaColor;
+  }
+  return colorMap[colorKey]; // Return the color associated with the note
+};
+
+// Function to convert hex color to rgba with alpha
+const hexToRGBA = (hex, alpha) => {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
 
 const EmployeeManagement = () => {
   const [employees, setEmployees] = useState([]);
-  const [editingEmployee, setEditingEmployee] = useState(null);
-  const [newEmployee, setNewEmployee] = useState({ id: null, name: '', email: '', role: '', phoneNumber: '' });
+  const [events, setEvents] = useState([]);
 
   useEffect(() => {
     fetchEmployees();
@@ -20,27 +59,40 @@ const EmployeeManagement = () => {
 
   const fetchEmployees = async () => {
     try {
-      const response = await fetch('/api/employees'); // Replace '/api/employees' with your backend endpoint
-      const data = await response.json();
-      setEmployees(data);
+      const response = await axios.get("/availability");
+      console.log("Response data:", response.data);
+      setEmployees(response.data);
+  
+      // Convert availability data to events for calendar
+      const newEvents = response.data.flatMap(employee => {
+        return employee.availibilityDetails.map(avail => ({
+          id: avail._id,
+       
+          start: new Date(avail.start_time), // Convert start time to Date object
+          end: new Date(avail.end_time), // Convert end time to Date object
+          dayOfWeek: avail.day_of_week, // Store day of the week for reference
+          availabilityType: avail.availability_type, // Store availability type for reference
+          notes: employee.notes, // Store notes for reference
+          isApproved: employee.isApproved, // Store approval status for reference
+          isDelete: employee.isDelete, // Store delete status for reference
+          createdAt: new Date(employee.createdAt), // Convert createdAt to Date object
+          updatedAt: new Date(employee.updatedAt) // Convert updatedAt to Date object
+        }));
+      });
+      setEvents(newEvents);
+      console.log("New events:", newEvents);
     } catch (error) {
-      console.error('Error fetching employees:', error);
+      console.error("Error fetching employees:", error);
     }
   };
+  
 
-  const handleAddEmployee = async (values, { setSubmitting }) => {
+  const handleAddEmployee = async (values, { setSubmitting, resetForm }) => {
     try {
-      const response = await fetch('/api/employees', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values),
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setEmployees([...employees, data]);
-        setNewEmployee({ id: null, name: '', email: '', role: '', phoneNumber: '' });
+      const response = await axios.post('/signup', values);
+      if (response.status === 201) {
+        setEmployees([...employees, response.data]);
+        resetForm();
       } else {
         console.error('Failed to add employee:', response.statusText);
       }
@@ -50,98 +102,67 @@ const EmployeeManagement = () => {
       setSubmitting(false);
     }
   };
-
-  const handleEditEmployee = async (id, newName, newEmail, newRole, newPhoneNumber) => {
-    try {
-      const response = await fetch(`/api/employees/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name: newName, email: newEmail, role: newRole, phoneNumber: newPhoneNumber }),
-      });
-      if (response.ok) {
-        const updatedEmployees = employees.map(employee =>
-          employee.id === id ? { ...employee, name: newName, email: newEmail, role: newRole, phoneNumber: newPhoneNumber } : employee
-        );
-        setEmployees(updatedEmployees);
-        setEditingEmployee(null);
-      } else {
-        console.error('Failed to edit employee:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error editing employee:', error);
-    }
-  };
-
-  const handleDeleteEmployee = async (id) => {
-    try {
-      const response = await fetch(`/api/employees/${id}`, {
-        method: 'DELETE',
-      });
-      if (response.ok) {
-        const updatedEmployees = employees.filter(employee => employee.id !== id);
-        setEmployees(updatedEmployees);
-      } else {
-        console.error('Failed to delete employee:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error deleting employee:', error);
-    }
+  const eventStyleGetter = (event, start, end, isSelected) => {
+    // Generate a color based on the user ID
+    const notes = event.notes; // Assuming userId is a property of the event object
+    const color = generateColor(notes);
+    
+    return {
+      style: {
+        backgroundColor: color,
+        borderStyle: 'none',
+        //border style light grey
+    
+        boxShadow: '0 1 2px 1px rgba(0, 0, 0, 0.8)',
+      
+      },
+    };
   };
 
   return (
     <div className="container">
       <div className="row justify-content-center">
-        <div className="col-md-4">
+      <div className="col-md-2">
           <h2>Employees</h2>
           <ul className="list-group">
+            {/* Render employees list */}
             {employees.map(employee => (
-              <li key={employee.id} className="list-group-item">
-                {/* Rendering logic remains the same */}
+              <li key={employee._id} className="list-group-item">
+                <div>User ID: {employee.userId}</div>
+                <div>Notes: {employee.notes}</div>
+                <div>Created On: {new Date(employee.createdOn).toLocaleString()}</div>
+                <div>Approved: {employee.isApproved ? 'Yes' : 'No'}</div>
+                <div>Deleted: {employee.isDelete ? 'Yes' : 'No'}</div>
+                <div>
+                  Availability:
+                  <ul>
+                    {employee.availibilityDetails && employee.availibilityDetails.map(avail => (
+                      <li key={avail._id}>
+                        Day of Week: {avail.day_of_week}, Start Time: {avail.start_time}, End Time: {avail.end_time}, Availability Type: {avail.availability_type}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </li>
             ))}
           </ul>
-          <div className="mt-3">
-            <h2>Add New Employee</h2>
-            <Formik
-              initialValues={{ name: '', email: '', role: '', phoneNumber: '' }}
-              validationSchema={validationSchema}
-              onSubmit={handleAddEmployee}
-            >
-              {({ isSubmitting }) => (
-                <Form>
-                  <div className="mb-2">
-                    <Field type="text" name="name" className="form-control mb-2" placeholder="Name" />
-                    <ErrorMessage name="name" component="div" className="text-danger" />
-                  </div>
-                  <div className="mb-2">
-                    <Field type="email" name="email" className="form-control mb-2" placeholder="Email" />
-                    <ErrorMessage name="email" component="div" className="text-danger" />
-                  </div>
-                  <div className="mb-2">
-                    <Field as="select" name="role" className="form-control mb-2">
-                      <option value="">Select Role</option>
-                      <option value="Manager">Manager</option>
-                      <option value="Employee">Employee</option>
-                    </Field>
-                    <ErrorMessage name="role" component="div" className="text-danger" />
-                  </div>
-                  <div className="mb-2">
-                    <Field type="text" name="phoneNumber" className="form-control mb-2" placeholder="Phone Number" />
-                    <ErrorMessage name="phoneNumber" component="div" className="text-danger" />
-                  </div>
-                  <button type="submit" className="btn btn-success" disabled={isSubmitting}>
-                    {isSubmitting ? 'Adding...' : 'Add Employee'}
-                  </button>
-                </Form>
-              )}
-            </Formik>
-          </div>
+         
+        </div>
+        <div className="col-md-8">
+          <h2>Availability Calendar</h2>
+          {/* Render React Big Calendar */}
+          <Calendar
+            localizer={localizer}
+            events={events}
+            startAccessor="start"
+            endAccessor="end"
+            style={{ height: '45%', width: '100%' }}
+            eventPropGetter={eventStyleGetter} // Apply custom event styles
+          />
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default EmployeeManagement;

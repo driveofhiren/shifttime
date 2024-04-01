@@ -24,12 +24,65 @@ const userSchema = new mongoose.Schema({
   plan: String 
 });
 
+const availabilitySchema = new mongoose.Schema({
+  userId: mongoose.Schema.Types.ObjectId,
+  availibilityDetails: [{
+    day_of_week: String,
+    start_time: String,
+    end_time: String,
+    availability_type: String,
+    _id: String,
+  }],
+  notes: String,
+  createdOn: Date,
+  isApproved: Boolean,
+  isDelete: Boolean,
+}, { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } });
+
+
 // Create a model based on the schema
 const User = mongoose.model('User', userSchema);
+const Availability = mongoose.model('Availability', availabilitySchema);
+
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+// Fetch all availability route
+app.get('/availability', async (req, res) => {
+  try {
+    // Fetch all availability data
+    const allAvailability = await Availability.find();
+
+    if (!allAvailability) {
+      return res.status(404).json({ error: 'No availability data found' });
+    }
+
+    res.status(200).json(allAvailability);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.get('/availability/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Fetch availability data for the given user ID
+    const availabilityData = await Availability.findOne({ userId });
+
+    if (!availabilityData) {
+      return res.status(404).json({ error: 'Availability data not found for the user' });
+    }
+
+    res.status(200).json(availabilityData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 // Sign-up route
 app.post('/signup', async (req, res) => {

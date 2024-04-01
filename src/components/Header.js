@@ -52,12 +52,6 @@ function Header() {
         <li>
             <a href="/">Home</a>
         </li>
-        <li>
-            <a href="#about">About</a>
-        </li>
-        <li>
-            <a href="#team">Team</a>
-        </li>
         {!isLoggedIn && (
             <>
                 <li>
@@ -141,8 +135,6 @@ function Header() {
         )}
     </ul>
 </nav>
-
-                    {/* .navbar */}
                     <i className="mobile-nav-toggle mobile-nav-show bi bi-list" />
                     <i className="mobile-nav-toggle mobile-nav-hide d-none bi bi-x" />
                 </div>

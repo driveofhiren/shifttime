@@ -30,7 +30,7 @@ const home = () => {
 								and reminders, hit labor targets.
 							</p>
 							<div className="d-flex justify-content-center justify-content-lg-start">
-								<a href="#about" className="btn-get-started">
+								<a href="/signup" className="btn-get-started">
 									Join
 								</a>
 							</div>

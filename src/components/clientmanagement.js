@@ -7,13 +7,13 @@ const validationSchema = Yup.object().shape({
   lastName: Yup.string().required('Last Name is required'),
   email: Yup.string().email('Invalid email').required('Email is required'),
   gender: Yup.string().required('Gender is required'),
-  
 });
 
 const ClientManagement = () => {
   const [users, setUsers] = useState([]);
   const [editingUser, setEditingUser] = useState(null);
-
+  const [saveMessage, setSaveMessage] = useState('');
+  const [deleteMessage, setDeleteMessage] = useState('');
 
   useEffect(() => {
     fetchUsers();
@@ -32,7 +32,6 @@ const ClientManagement = () => {
       console.error('Error fetching users:', error);
     }
   };
- 
 
   const handleEditUser = async (id, updatedUser) => {
     try {
@@ -44,8 +43,9 @@ const ClientManagement = () => {
         body: JSON.stringify(updatedUser),
       });
       if (response.ok) {
-        fetchUsers(); // Refresh user list after successful edit
-        setEditingUser(null); // Reset editing state
+        fetchUsers();
+        setEditingUser(null);
+        setSaveMessage('Changes saved successfully.');
       } else {
         console.error('Failed to edit user:', response.statusText);
       }
@@ -60,7 +60,8 @@ const ClientManagement = () => {
         method: 'DELETE',
       });
       if (response.ok) {
-        fetchUsers(); // Refresh user list after successful delete
+        fetchUsers();
+        setDeleteMessage('User deleted successfully.');
       } else {
         console.error('Failed to delete user:', response.statusText);
       }
@@ -72,6 +73,8 @@ const ClientManagement = () => {
   return (
     <div className="container ">
       <h2>Edit Clients</h2>
+      {saveMessage && <div className="alert alert-success">{saveMessage}</div>}
+      {deleteMessage && <div className="alert alert-success">{deleteMessage}</div>}
       <div className="row ">
         {users && users.map(user => (
           <div key={user._id} className="col-md-6 mt-5 md-5">
