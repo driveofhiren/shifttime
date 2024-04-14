@@ -87,9 +87,6 @@ function Header() {
                 </li>
             </>
         )}
-        <li>
-            <a href="blog.html">Contact</a>
-        </li>
         {isLoggedIn && (
             <>
                 {userRole === 'SuperAdmin' && (

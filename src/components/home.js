@@ -1,21 +1,28 @@
 import React from 'react'
-import axios from 'axios';
+import axios from 'axios'
 
 const home = () => {
 	const handleSubscription = async (plan) => {
 		try {
-			const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
-			const email = loggedInUser ? loggedInUser.email : '';
-	  
-		  const response = await axios.post('/subscribe', { plan, email });
-		  console.log('Subscription successful:', response.data);
-		  
-		  // You may perform additional actions after successful subscription
+			const loggedInUser = JSON.parse(
+				localStorage.getItem('loggedInUser')
+			)
+			if (!loggedInUser) {
+				// If user is not logged in, redirect to login page
+				window.location.href = '/login'
+				return
+			}
+			const email = loggedInUser.email
+
+			const response = await axios.post('/subscribe', { plan, email })
+			console.log('Subscription successful:', response.data)
+
+			// You may perform additional actions after successful subscription
 		} catch (error) {
-		  console.error('Subscription failed:', error);
-		  // Handle subscription failure
+			console.error('Subscription failed:', error)
+			// Handle subscription failure
 		}
-	  };
+	}
 	return (
 		<>
 			<section id="hero" className="hero">
@@ -400,12 +407,16 @@ const home = () => {
 											<i className="bi bi-check" /> Shift
 											swapping
 										</li>
-									
 									</ul>
 									<div className="text-center">
-									<button onClick={() => handleSubscription('Gold')} className="buy-btn">
-        Subscribe to Gold Plan
-      </button>
+										<button
+											onClick={() =>
+												handleSubscription('Gold')
+											}
+											className="buy-btn"
+										>
+											Subscribe to Gold Plan
+										</button>
 									</div>
 								</div>
 							</div>
@@ -449,9 +460,14 @@ const home = () => {
 										</li>
 									</ul>
 									<div className="text-center">
-									<button onClick={() => handleSubscription('Silver')} className="buy-btn">
-        Subscribe to Silver Plan
-      </button>
+										<button
+											onClick={() =>
+												handleSubscription('Silver')
+											}
+											className="buy-btn"
+										>
+											Subscribe to Silver Plan
+										</button>
 									</div>
 								</div>
 							</div>
@@ -500,9 +516,14 @@ const home = () => {
 										</li>
 									</ul>
 									<div className="text-center">
-									<button onClick={() => handleSubscription('Platinum')} className="buy-btn">
-        Subscribe to Platinum Plan
-      </button>
+										<button
+											onClick={() =>
+												handleSubscription('Platinum')
+											}
+											className="buy-btn"
+										>
+											Subscribe to Platinum Plan
+										</button>
 									</div>
 								</div>
 							</div>
@@ -527,22 +548,9 @@ const home = () => {
 										className="img-fluid"
 										alt=""
 									/>
-									<h4>Walter White</h4>
-									<span>Web Development</span>
-									<div className="social">
-										<a href="">
-											<i className="bi bi-twitter" />
-										</a>
-										<a href="">
-											<i className="bi bi-facebook" />
-										</a>
-										<a href="">
-											<i className="bi bi-instagram" />
-										</a>
-										<a href="">
-											<i className="bi bi-linkedin" />
-										</a>
-									</div>
+									<h4>Hiren Gohil</h4>
+									<span>Front End Developer</span>
+									<div className="social"></div>
 								</div>
 							</div>
 							{/* End Team Member */}
@@ -553,8 +561,10 @@ const home = () => {
 										className="img-fluid"
 										alt=""
 									/>
-									<h4>Sarah Jhinson</h4>
-									<span>Marketing</span>
+									<h4>Ankit Maniya</h4>
+									<span>
+										Back End and Front-End Developer
+									</span>
 									<div className="social">
 										<a href="">
 											<i className="bi bi-twitter" />
@@ -579,34 +589,8 @@ const home = () => {
 										className="img-fluid"
 										alt=""
 									/>
-									<h4>William Anderson</h4>
-									<span>Content</span>
-									<div className="social">
-										<a href="">
-											<i className="bi bi-twitter" />
-										</a>
-										<a href="">
-											<i className="bi bi-facebook" />
-										</a>
-										<a href="">
-											<i className="bi bi-instagram" />
-										</a>
-										<a href="">
-											<i className="bi bi-linkedin" />
-										</a>
-									</div>
-								</div>
-							</div>
-							{/* End Team Member */}
-							<div className="col-xl-3 col-md-6 d-flex">
-								<div className="member">
-									<img
-										src="assets/img/team/team-4.jpg"
-										className="img-fluid"
-										alt=""
-									/>
-									<h4>Amanda Jepson</h4>
-									<span>Accountant</span>
+									<h4>Prateek Boghani</h4>
+									<span>Android Developer</span>
 									<div className="social">
 										<a href="">
 											<i className="bi bi-twitter" />

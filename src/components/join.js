@@ -1,32 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
 const SignUp = () => {
-  const [users, setUsers] = useState([]);
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get('/users');
-        setUsers(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchUsers();
-  }, []);
+  const [signupError, setSignupError] = useState('');
 
   const validationSchema = Yup.object().shape({
-    email: Yup.string()
-      .email('Invalid email')
-      .required('Email is required'),
+    email: Yup.string().email('Invalid email').required('Email is required'),
     username: Yup.string().required('Username is required'),
-    password: Yup.string()
-      .min(6, 'Password must be at least 6 characters')
-      .required('Password is required'),
+    password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
     role: Yup.string().required('Role is required'),
     firstName: Yup.string().required('First Name is required'),
     lastName: Yup.string().required('Last Name is required'),
@@ -35,24 +18,19 @@ const SignUp = () => {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-     
-      const { email, username, password, role, firstName, lastName, gender } = values;
-  
-      await axios.post('/signup', { email, username, password, role, firstName, lastName, gender });
-      window.location.href = '/login';
+      const response = await axios.post('/signup', values);
+      // Handle successful signup, e.g., redirect to login page
+      window.location.href = '/login'; // Redirect to the login page
     } catch (error) {
-      alert('Error creating user');
-    } finally {
-      setSubmitting(false);
+      setSignupError('Error creating user');
     }
+    setSubmitting(false);
   };
-  
 
   return (
     <div className="container">
       <div className="row justify-content-center mt-5">
         <div className="col-md-6">
-          <h2 className="text-center mb-4">Sign Up</h2>
           <Formik
             initialValues={{
               email: '',
@@ -68,7 +46,8 @@ const SignUp = () => {
             onSubmit={handleSubmit}
           >
             {({ isSubmitting }) => (
-              <Form className="p-3 bg-white shadow rounded needs-validation">
+              <Form className="p-3 bg-white shadow rounded">
+                <h2 className="text-center mb-4">Sign Up</h2>
                 <div className="mb-3">
                   <label htmlFor="firstName" className="form-label">
                     First Name:
@@ -82,7 +61,7 @@ const SignUp = () => {
                   <ErrorMessage
                     name="firstName"
                     component="div"
-                    className="invalid-feedback"
+                    className="text-danger"
                   />
                 </div>
                 <div className="mb-3">
@@ -98,7 +77,7 @@ const SignUp = () => {
                   <ErrorMessage
                     name="lastName"
                     component="div"
-                    className="invalid-feedback"
+                    className="text-danger"
                   />
                 </div>
                 <div className="mb-3">
@@ -114,7 +93,7 @@ const SignUp = () => {
                   <ErrorMessage
                     name="email"
                     component="div"
-                    className="invalid-feedback"
+                    className="text-danger"
                   />
                 </div>
                 <div className="mb-3">
@@ -130,7 +109,7 @@ const SignUp = () => {
                   <ErrorMessage
                     name="username"
                     component="div"
-                    className="invalid-feedback"
+                    className="text-danger"
                   />
                 </div>
                 <div className="mb-3">
@@ -146,7 +125,7 @@ const SignUp = () => {
                   <ErrorMessage
                     name="password"
                     component="div"
-                    className="invalid-feedback"
+                    className="text-danger"
                   />
                 </div>
                 <div className="mb-3">
@@ -167,29 +146,44 @@ const SignUp = () => {
                   <ErrorMessage
                     name="gender"
                     component="div"
-                    className="invalid-feedback"
+                    className="text-danger"
                   />
                 </div>
+                <div className="mb-3">
+                  <label htmlFor="role" className="form-label">
+                    Role:
+                  </label>
+                  <Field
+                    as="select"
+                    className="form-select"
+                    id="role"
+                    name="role"
+                  >
+                    <option value="">Select</option>
+                    <option value="ADMIN">Admin</option>
+                    <option value="USER">User</option>
+                  </Field>
+                  <ErrorMessage
+                    name="role"
+                    component="div"
+                    className="text-danger"
+                  />
+                </div>
+                {signupError && (
+                  <div className="mb-3 text-danger">{signupError}</div>
+                )}
                 <button
                   type="submit"
                   className="btn btn-success"
                   disabled={isSubmitting}
                 >
-                  Sign Up
+                  {isSubmitting ? 'Signing Up...' : 'Sign Up'}
                 </button>
               </Form>
             )}
           </Formik>
         </div>
       </div>
-      {/* <div>
-        <h2>Users</h2>
-        <ul>
-          {users.map(user => (
-            <li key={user.email}>{user.email}</li>
-          ))}
-        </ul>
-      </div> */}
     </div>
   );
 };
